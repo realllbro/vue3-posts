@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  createWebHashHistory,
+} from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import AboutView from '@/views/AboutView.vue';
 
@@ -87,7 +91,11 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/'),
+  // 웹 히스토리 모드
+  // history: createWebHistory(),
+
+  // 히스토리 해시 모드 url에 계속 #이 붙는다.
+  history: createWebHashHistory(),
   routes,
 });
 
