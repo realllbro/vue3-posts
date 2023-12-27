@@ -2,7 +2,7 @@
   <div>
     <h2>게시글 등록</h2>
     <hr class="my-4" />
-    <from @submit.prevent="save">
+    <form @submit.prevent="save">
       <div class="mb-3">
         <label for="title" class="form-label">제목</label>
         <input
@@ -31,7 +31,7 @@
         </button>
         <button class="btn btn-primary">저장</button>
       </div>
-    </from>
+    </form>
   </div>
 </template>
 
@@ -46,8 +46,6 @@ const form = ref({
   content: null,
 });
 const save = async () => {
-  alert(1);
-  /*
   try {
     await createPost({
       ...form.value,
@@ -57,7 +55,6 @@ const save = async () => {
   } catch (error) {
     console.error(error);
   }
-  */
 };
 const goListPage = () => router.push({ name: 'PostList' });
 </script>

@@ -2,7 +2,7 @@
   <div>
     <h2>게시글 수정</h2>
     <hr class="my-4" />
-    <from @submit.prevent="edit">
+    <form @submit.prevent="edit">
       <div class="mb-3">
         <label for="title" class="form-label">제목</label>
         <input
@@ -31,7 +31,7 @@
         </button>
         <button class="btn btn-primary">수정</button>
       </div>
-    </from>
+    </form>
   </div>
 </template>
 

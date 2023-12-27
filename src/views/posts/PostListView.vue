@@ -31,6 +31,10 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const posts = ref([]);
+const params = ref({
+  _sort: 'createdAt',
+  _order: 'desc',
+});
 
 //Promise 문법
 const fetchPosts1 = () => {
@@ -56,7 +60,7 @@ const fetchPosts = async () => {
   // ({ data: posts.value } = await getPosts());
 
   try {
-    const { data } = await getPosts();
+    const { data } = await getPosts(params.value);
     posts.value = data;
   } catch (error) {
     console.error(error);
