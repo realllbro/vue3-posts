@@ -92,10 +92,10 @@ const routes = [
 
 const router = createRouter({
   // 웹 히스토리 모드
-  // history: createWebHistory(),
+  history: createWebHistory(),
 
   // 히스토리 해시 모드 url에 계속 #이 붙는다.
-  history: createWebHashHistory(),
+  //history: createWebHashHistory(),
   routes,
 });
 

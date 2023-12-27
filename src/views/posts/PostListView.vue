@@ -32,10 +32,38 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const posts = ref([]);
 
-const fetchPosts = () => {
-  posts.value = getPosts();
+//Promise 문법
+const fetchPosts1 = () => {
+  getPosts()
+    .then(response => {
+      console.log('response : ', response);
+    })
+    .catch(error => {
+      console.log('error : ', error);
+    });
+};
+
+//async/await 문법
+const fetchPosts = async () => {
+  // const response = await getPosts();
+  // console.dir(response); //객체 로그 찍기.
+
+  // 1.구조분해 할당.
+  // const { data } = await getPosts();
+  // posts.value = data;
+
+  // 2.같은 문법 : 왼쪽 결과를 오른쪽에 대입.
+  // ({ data: posts.value } = await getPosts());
+
+  try {
+    const { data } = await getPosts();
+    posts.value = data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 fetchPosts();
+
 const goPage = id => {
   // 1.url : http://localhost:5173/posts/1
   // router.push('/posts/' + id);
