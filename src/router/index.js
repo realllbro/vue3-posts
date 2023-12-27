@@ -40,11 +40,15 @@ const routes = [
     // /user/alice
     // /user/bruce  -> PostDetailView /user/ 까지는 동일하게 기술하고 뒤에 달라지는 값은 세미콜론(:) 사용
     // /user/tom
-    // 세미콜론(:) 은 $route 객체에 params 로 받을 수 있다.
+    // 세미콜론(:) 으로 동적 할당된 URL 정보는 "$route" 객체에 params 로 받을 수 있다. ex) $route.params.id
 
     path: '/posts/:id',
     name: 'PostDetail',
     component: PostDetailView,
+    // props 속성으로 ":id" 을 받을 수 있다.
+    // props: true,
+    // props: {word : 'hello'}, 객체도 넘길 수 있다.
+    props: route => ({ id: parseInt(route.params.id) }), //함수로 넘기기.
   },
   {
     path: '/posts/:id/edit',
