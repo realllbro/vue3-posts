@@ -36,29 +36,8 @@ const params = ref({
   _order: 'desc',
 });
 
-//Promise 문법
-const fetchPosts1 = () => {
-  getPosts()
-    .then(response => {
-      console.log('response : ', response);
-    })
-    .catch(error => {
-      console.log('error : ', error);
-    });
-};
-
 //async/await 문법
 const fetchPosts = async () => {
-  // const response = await getPosts();
-  // console.dir(response); //객체 로그 찍기.
-
-  // 1.구조분해 할당.
-  // const { data } = await getPosts();
-  // posts.value = data;
-
-  // 2.같은 문법 : 왼쪽 결과를 오른쪽에 대입.
-  // ({ data: posts.value } = await getPosts());
-
   try {
     const { data } = await getPosts(params.value);
     posts.value = data;
@@ -88,6 +67,35 @@ const goPage = id => {
     hash: '#world!',
   });
 };
+
+/* 
+  1.Promise 문법
+const fetchPosts = () => {
+  getPosts()
+    .then(response => {
+      console.log('response : ', response);
+    })
+    .catch(error => {
+      console.log('error : ', error);
+    });
+};
+
+ 2.async/await 문법
+const fetchPosts = async () => {
+
+   2-1.호출 리턴 값 객체 로그 찍기.
+   const response = await getPosts();
+   console.dir(response); 
+
+   2-2.호출 리턴 값 구조분해 할당. 결과값에서 data 속성만 추출
+   const { data } = await getPosts();
+   posts.value = data;
+
+   2-3. 2-2와 같은 문법 : 왼쪽 결과를 오른쪽에 대입.
+   ({ data: posts.value } = await getPosts());
+
+};
+*/
 </script>
 
 <style lang="scss" scoped></style>

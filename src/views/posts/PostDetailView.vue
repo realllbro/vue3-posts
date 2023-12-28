@@ -61,8 +61,11 @@ const props = defineProps({
  * 단) 객체 할당 불가능
  * 장) form.title, form.content
  */
+
+// ref 변수선언
 const post = ref({});
 
+// 1.조회
 const fetchPost = async () => {
   try {
     const { data } = await getPostById(props.id);
@@ -73,13 +76,16 @@ const fetchPost = async () => {
   }
 };
 
+// 2.v-model 맵핑 작업
 const setPost = ({ title, content, createdAt }) => {
   post.value.title = title;
   post.value.content = content;
   post.value.createdAt = createdAt;
 };
-
+// 3.호출
 fetchPost();
+
+// 1.삭제
 const remove = async () => {
   try {
     if (confirm('삭제 하시겠습니까?') === false) {

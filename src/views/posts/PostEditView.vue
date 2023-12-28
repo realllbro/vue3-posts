@@ -44,10 +44,13 @@ const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
 
+// ref 변수선언
 const form = ref({
   title: null,
   content: null,
 });
+
+// 1.조회
 const fetchPost = async () => {
   try {
     const { data } = await getPostById(id);
@@ -57,11 +60,14 @@ const fetchPost = async () => {
     console.error(error);
   }
 };
+// 2.v-model 맵핑 작업
 const setForm = ({ title, content }) => {
   form.value.title = title;
   form.value.content = content;
 };
 fetchPost();
+
+// 3.수정
 const edit = async ({ title, content }) => {
   try {
     await updatePosts(id, { ...form.value });

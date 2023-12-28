@@ -41,16 +41,22 @@ import { useRouter } from 'vue-router';
 import { createPost } from '@/api/posts';
 
 const router = useRouter();
+
+// 1.변수선언
 const form = ref({
   title: null,
   content: null,
 });
+
+// 2.생성
+// ref form변수로 바인딩한 객체로 createPost 호출
 const save = async () => {
   try {
     await createPost({
       ...form.value,
       careatedAt: Date.now(),
     });
+    //저장 후 페이지 이동
     router.push({ name: 'PostList' });
   } catch (error) {
     console.error(error);
