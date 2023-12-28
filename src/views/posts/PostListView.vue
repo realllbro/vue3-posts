@@ -2,7 +2,31 @@
   <div>
     <h2>게시글 목록</h2>
     <hr class="my-4" />
-    <!-- Grid 형식으로 출력-->
+    <!-- 검색조건 시작-->
+    <form @submit.prevent>
+      <div class="row g-3">
+        <div class="col">
+          <!-- params.title_like 가 v-model 지시자를 통해 
+            양방향으로 맵핑되어 있고 watchEffect(fetchPosts); 가 선언되어 있어 
+            반응형 데이터가 변경되었기 때문에 watchEffect 가 이를 체크해서 
+            다시 콜백 메서드를 실행한다.
+            (예전 처럼 복잡한 로직이 필요 없게 됐다.)
+          -->
+          <input v-model="params.title_like" type="text" class="form-control" />
+        </div>
+        <div class="col-3">
+          <select v-model="params._limit" class="form-select">
+            <option value="3">3개씩 보기</option>
+            <option value="6">6개씩 보기</option>
+            <option value="9">9개씩 보기</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <!-- 검색조건 끝-->
+
+    <hr class="my-4" />
+    <!-- Grid 형식으로 출력 시작-->
     <div class="row g-3">
       <div v-for="post in posts" :key="post.id" class="col-4">
         <PostItem
@@ -13,10 +37,63 @@
         ></PostItem>
       </div>
     </div>
-    <hr class="my-4" />
+    <!-- Grid 형식으로 출력 끝-->
+
+    <!-- 페이지네비게이션 시작 -->
+    <nav class="mt-5" aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <!-- 페이지가 1보다 클때만 활성화 -->
+        <li class="page-item">
+          <a
+            class="page-link"
+            :class="{ disabled: !(params._page > 1) }"
+            href="#"
+            aria-label="Previous"
+            @click.prevent="--params._page"
+          >
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li
+          v-for="page in pageCount"
+          :key="page"
+          class="page-item"
+          :class="{ active: params._page === page }"
+        >
+          <!-- 클릭할때 마다 params._page = page 를 할당하고
+            watchEffect(fetchPosts); 를 선언하면 fetchPosts 내에서 사용하는 
+            반응형 데이터가 변경되었기 때문에 watchEffect 가 이를 체크해서 
+            다시 콜백 메서드를 실행한다.
+            (page를 할당하고 이걸 다시 메소드를 호출하는 로직이 필요없게 됐다.)
+          -->
+          <a class="page-link" href="#" @click.prevent="params._page = page">{{
+            page
+          }}</a>
+        </li>
+        <!-- 페이지가 끝에 다다르면 비활성화 -->
+        <li
+          class="page-item"
+          :class="{ disabled: !(params._page < pageCount) }"
+        >
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Next"
+            @click.prevent="++params._page"
+          >
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- 페이지네비게이션 끝 -->
+
+    <!-- 상세보기 시작 -->
+    <hr class="my-5" />
     <AppCard>
       <PostDetailView :id="2"></PostDetailView>
     </AppCard>
+    <!-- 상세보기 끝-->
   </div>
 </template>
 
@@ -26,36 +103,59 @@ import PostDetailView from '@/views/posts/PostDetailView.vue';
 import AppCard from '@/components/AppCard.vue';
 
 import { getPosts } from '@/api/posts';
-import { ref } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const posts = ref([]);
+
+// pagination
 const params = ref({
   _sort: 'createdAt',
   _order: 'desc',
+  _limit: 3,
+  _page: 1,
+  //title_like: '1',
 });
+
+//페이지 토탈건수
+const totalCount = ref(0);
+
+//페이징 갯수
+const pageCount = computed(() =>
+  //소수점 올림 처리
+  Math.ceil(totalCount.value / params.value._limit),
+);
 
 //async/await 문법
 const fetchPosts = async () => {
   try {
-    const { data } = await getPosts(params.value);
+    // 1.응답값에서 data, headers 속성만 추출
+    const { data, headers } = await getPosts(params.value);
     posts.value = data;
+
+    // 2.x-total-count 값은 하이픈이 포함되어 있어서 대괄호[] 표기법으로 추출
+    totalCount.value = headers['x-total-count'];
   } catch (error) {
     console.error(error);
   }
 };
-fetchPosts();
+//fetchPosts();
 
+// watchEffect 으로 처리하면 fetchPosts 메소드 안에 반응형 데이터가
+// 변경되면 콜백함수가 다시 실행된다.
+// watchEffect는 watch와 다르게 초기에 한번 실행된다.
+watchEffect(fetchPosts);
+
+// 1.url : ex)http://localhost:5173/posts/1
+// router.push('/posts/' + id);
+
+// 2.url : ex)http://localhost:5173/posts/$(id)
+// router.push('/posts/$(id)');
+
+// 객체 및 이름으로 호출시
+// 3.url : ex)http://localhost:5173/posts/1?searchText=hello#world!
 const goPage = id => {
-  // 1.url : http://localhost:5173/posts/1
-  // router.push('/posts/' + id);
-
-  // 2.url : http://localhost:5173/posts/$(id)
-  // router.push('/posts/$(id)');
-
-  // 객체 및 이름으로 호출
-  // 3.url : http://localhost:5173/posts/1?searchText=hello#world!
   router.push({
     name: 'PostDetail',
     params: {
@@ -83,6 +183,7 @@ const fetchPosts = () => {
  2.async/await 문법
 const fetchPosts = async () => {
 
+  try {  
    2-1.호출 리턴 값 객체 로그 찍기.
    const response = await getPosts();
    console.dir(response); 
@@ -93,7 +194,9 @@ const fetchPosts = async () => {
 
    2-3. 2-2와 같은 문법 : 왼쪽 결과를 오른쪽에 대입.
    ({ data: posts.value } = await getPosts());
-
+  } catch (error) {
+    console.error(error);
+  }   
 };
 */
 </script>
