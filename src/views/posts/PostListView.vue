@@ -39,67 +39,29 @@
     </div>
     <!-- Grid 형식으로 출력 끝-->
 
-    <!-- 페이지네비게이션 시작 -->
-    <nav class="mt-5" aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <!-- 페이지가 1보다 클때만 활성화 -->
-        <li class="page-item">
-          <a
-            class="page-link"
-            :class="{ disabled: !(params._page > 1) }"
-            href="#"
-            aria-label="Previous"
-            @click.prevent="--params._page"
-          >
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li
-          v-for="page in pageCount"
-          :key="page"
-          class="page-item"
-          :class="{ active: params._page === page }"
-        >
-          <!-- 클릭할때 마다 params._page = page 를 할당하고
-            watchEffect(fetchPosts); 를 선언하면 fetchPosts 내에서 사용하는 
-            반응형 데이터가 변경되었기 때문에 watchEffect 가 이를 체크해서 
-            다시 콜백 메서드를 실행한다.
-            (page를 할당하고 이걸 다시 메소드를 호출하는 로직이 필요없게 됐다.)
-          -->
-          <a class="page-link" href="#" @click.prevent="params._page = page">{{
-            page
-          }}</a>
-        </li>
-        <!-- 페이지가 끝에 다다르면 비활성화 -->
-        <li
-          class="page-item"
-          :class="{ disabled: !(params._page < pageCount) }"
-        >
-          <a
-            class="page-link"
-            href="#"
-            aria-label="Next"
-            @click.prevent="++params._page"
-          >
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <!-- 페이지네비게이션 끝 -->
-
-    <!-- 상세보기 시작 -->
-    <hr class="my-5" />
-    <AppCard>
-      <PostDetailView></PostDetailView>
-    </AppCard>
-    <!-- 상세보기 끝-->
+    <!--
+      emits 이벤트 = @page="page => (params._page = page)"
+    -->
+    <AppPagination
+      :current-page="params._page"
+      :page-count="pageCount"
+      @page="page => (params._page = page)"
+    />
+    <template v-if="posts && posts.length > 0">
+      <!-- 상세보기 시작 -->
+      <hr class="my-5" />
+      <AppCard>
+        <PostDetailView :id="posts[0].id"></PostDetailView>
+      </AppCard>
+      <!-- 상세보기 끝-->
+    </template>
   </div>
 </template>
 
 <script setup>
 import PostItem from '@/components/posts/PostItem.vue';
 import PostDetailView from '@/views/posts/PostDetailView.vue';
+import AppPagination from '@/components/AppPagination.vue';
 import AppCard from '@/components/AppCard.vue';
 
 import { getPosts } from '@/api/posts';

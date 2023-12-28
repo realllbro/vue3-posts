@@ -6,8 +6,9 @@ export function getPosts(params) {
 }
 
 export function getPostById(id) {
-  // ' 아니고, ` 이거임 get('/${id}`) or get(id) 둘다 가능.
-  return posts.get(id);
+  // ' 아니고, ` 이거임 get(`/${id}`) or get(id) 둘다 가능.
+  // get(id) 이거는 데이터 타입 영향을 많이 받으니 get(`/${id}`) 이걸로 가자.
+  return posts.get(`/${id}`);
 }
 
 export function createPost(data) {
