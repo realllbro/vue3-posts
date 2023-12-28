@@ -50,9 +50,9 @@ const routes = [
     name: 'PostDetail',
     component: PostDetailView,
     // props 속성으로 ":id" 을 받을 수 있다.
-    // props: true,
+    props: true,
     // props: {word : 'hello'}, 객체도 넘길 수 있다.
-    props: route => ({ id: parseInt(route.params.id) }), //함수로 넘기기.
+    // props: route => ({ id: parseInt(route.params.id) }), //함수로 넘기기.
   },
   {
     path: '/posts/:id/edit',

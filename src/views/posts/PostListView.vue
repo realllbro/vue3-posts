@@ -91,7 +91,7 @@
     <!-- 상세보기 시작 -->
     <hr class="my-5" />
     <AppCard>
-      <PostDetailView :id="2"></PostDetailView>
+      <PostDetailView></PostDetailView>
     </AppCard>
     <!-- 상세보기 끝-->
   </div>

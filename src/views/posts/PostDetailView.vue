@@ -48,7 +48,7 @@ const route = useRoute();
 
 // props 속성으로 받기
 const props = defineProps({
-  id: Number,
+  id: String,
 });
 
 /**
