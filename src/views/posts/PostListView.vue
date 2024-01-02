@@ -33,14 +33,19 @@
       @page="page => (params._page = page)"
     />
 
-    <PostModal
-      v-model="show"
-      :title="modalTitle"
-      :content="modalContent"
-      :created-at="modalCreateAt"
-    />
+    <!-- 뷰3에 추가된 내장컴포넌트 Teleport는
+       특정 DOM 으로 위치이동시킬 때 사용한다. -->
+    <Teleport to="#modal">
+      <!-- PostModal은 AppModalCustom 사용 v-model로 구현함.-->
+      <PostModal
+        v-model="show"
+        :title="modalTitle"
+        :content="modalContent"
+        :created-at="modalCreateAt"
+      />
+    </Teleport>
 
-    <!-- 모달 props emits 사용-->
+    <!-- AppModal 컴포넌트 사용 props, emits 구현함.-->
     <!-- <AppModal :show="show" title="게시글" @close="closeModal">
         <template #default>
           <div class="row g-3">
@@ -60,7 +65,7 @@
           <button type="button" class="btn btn-primary">Save changes</button>
         </template>
       </AppModal>      
-     -->
+     끝 -->
 
     <template v-if="posts && posts.length > 0">
       <!-- 상세보기 시작 -->
