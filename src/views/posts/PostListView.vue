@@ -3,40 +3,24 @@
     <h2>게시글 목록</h2>
     <hr class="my-4" />
     <!-- 검색조건 시작-->
-    <form @submit.prevent>
-      <div class="row g-3">
-        <div class="col">
-          <!-- params.title_like 가 v-model 지시자를 통해 
-            양방향으로 맵핑되어 있고 watchEffect(fetchPosts); 가 선언되어 있어 
-            반응형 데이터가 변경되었기 때문에 watchEffect 가 이를 체크해서 
-            다시 콜백 메서드를 실행한다.
-            (예전 처럼 복잡한 로직이 필요 없게 됐다.)
-          -->
-          <input v-model="params.title_like" type="text" class="form-control" />
-        </div>
-        <div class="col-3">
-          <select v-model="params._limit" class="form-select">
-            <option value="3">3개씩 보기</option>
-            <option value="6">6개씩 보기</option>
-            <option value="9">9개씩 보기</option>
-          </select>
-        </div>
-      </div>
-    </form>
+    <PostFilter
+      v-model:title="params.title_like"
+      v-model:limit="params._limit"
+    ></PostFilter>
     <!-- 검색조건 끝-->
 
     <hr class="my-4" />
     <!-- Grid 형식으로 출력 시작-->
-    <div class="row g-3">
-      <div v-for="post in posts" :key="post.id" class="col-4">
+    <AppGrid :items="posts">
+      <template v-slot="{ item }">
         <PostItem
-          :title="post.title"
-          :content="post.content"
-          :created-at="post.createdAt"
-          @click="goPage(post.id)"
+          :title="item.title"
+          :content="item.content"
+          :created-at="item.createdAt"
+          @click="goPage(item.id)"
         ></PostItem>
-      </div>
-    </div>
+      </template>
+    </AppGrid>
     <!-- Grid 형식으로 출력 끝-->
 
     <!--
@@ -61,8 +45,11 @@
 <script setup>
 import PostItem from '@/components/posts/PostItem.vue';
 import PostDetailView from '@/views/posts/PostDetailView.vue';
+import PostFilter from '@/components/posts/PostFilter.vue';
+
 import AppPagination from '@/components/AppPagination.vue';
 import AppCard from '@/components/AppCard.vue';
+import AppGrid from '@/components/AppGrid.vue';
 
 import { getPosts } from '@/api/posts';
 import { ref, computed, watchEffect } from 'vue';

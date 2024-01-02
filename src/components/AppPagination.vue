@@ -3,10 +3,9 @@
   <nav class="mt-5" aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
       <!-- 페이지가 1보다 클때만 활성화 -->
-      <li class="page-item">
+      <li class="page-item" :class="isPrevPage">
         <a
           class="page-link"
-          :class="isPrevPage"
           href="#"
           aria-label="Previous"
           @click.prevent="$emit('page', currentPage - 1)"

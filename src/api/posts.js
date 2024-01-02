@@ -15,8 +15,14 @@ export function createPost(data) {
   return posts.post('', data);
 }
 
-export function updatePosts(id, data) {
+//전체수정 값을 안넘기면 빈값으로 나머지를 처리한다. (주의)
+export function updatePostsAll(id, data) {
   return posts.put(`/${id}`, data);
+}
+
+//일부수정
+export function updatePosts(id, data) {
+  return posts.patch(`/${id}`, data);
 }
 
 export function deletePosts(id) {
