@@ -19,7 +19,8 @@
         <button class="btn btn-primary">수정</button>
       </template>
     </PostForm>
-    <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" />
+    <!-- <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" /> -->
+    <AppAlertMulti :items="alerts" />
   </div>
 </template>
 
@@ -29,6 +30,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { getPostById, updatePosts } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
 import AppAlert from '@/components/AppAlert.vue';
+import AppAlertMulti from '@/components/AppAlertMulti.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -48,7 +50,8 @@ const fetchPost = async () => {
     setForm(data);
   } catch (error) {
     console.error(error);
-    vAlert('네트워크 오류!');
+    //vAlert('네트워크 오류!');
+    vAlertMulti(error.message);
   }
 };
 // 2.v-model 맵핑 작업
@@ -62,10 +65,12 @@ fetchPost();
 const edit = async ({ title, content }) => {
   try {
     await updatePosts(id, { ...form.value });
-    vAlert('수정이 완료되었습니다!!!', 'success');
-    router.push({ name: 'PostDetail', params: { id } });
+    //vAlert('수정이 완료되었습니다!!!', 'success');
+    vAlertMulti('수정이 완료되었습니다!!!', 'success');
+    //router.push({ name: 'PostDetail', params: { id } });
   } catch (error) {
     console.error(error);
+    vAlertMulti(error.message);
   }
   form.value.title = title;
   form.value.content = content;
@@ -85,6 +90,16 @@ const vAlert = (message, type = 'error') => {
   alertType.value = type;
   setTimeout(() => {
     showAlert.value = false;
+  }, 2000);
+};
+
+//반응형 배열로 멀티건 처리
+const alerts = ref([]);
+
+const vAlertMulti = (message, type = 'error') => {
+  alerts.value.push({ message, type });
+  setTimeout(() => {
+    alerts.value.shift();
   }, 2000);
 };
 </script>
