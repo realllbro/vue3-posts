@@ -18,6 +18,7 @@
           :content="item.content"
           :created-at="item.createdAt"
           @click="goPage(item.id)"
+          @modal="openModal(item)"
         ></PostItem>
       </template>
     </AppGrid>
@@ -31,6 +32,36 @@
       :page-count="pageCount"
       @page="page => (params._page = page)"
     />
+
+    <PostModal
+      v-model="show"
+      :title="modalTitle"
+      :content="modalContent"
+      :created-at="modalCreateAt"
+    />
+
+    <!-- 모달 props emits 사용-->
+    <!-- <AppModal :show="show" title="게시글" @close="closeModal">
+        <template #default>
+          <div class="row g-3">
+            <div class="col-3 text-muted">제목:</div>
+            <div class="col-9">{{ modalTitle }}</div>
+            <div class="col-3 text-muted">내용:</div>
+            <div class="col-9">{{ modalContent }}</div>
+            <div class="col-3 text-muted">등록일:</div>
+            <div class="col-9">{{ modalCreateAt }}</div>
+          </div>
+        </template>
+
+        <template #actions>
+          <button type="button" class="btn btn-secondary" @click="closeModal">
+            닫기
+          </button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </template>
+      </AppModal>      
+     -->
+
     <template v-if="posts && posts.length > 0">
       <!-- 상세보기 시작 -->
       <hr class="my-5" />
@@ -46,10 +77,11 @@
 import PostItem from '@/components/posts/PostItem.vue';
 import PostDetailView from '@/views/posts/PostDetailView.vue';
 import PostFilter from '@/components/posts/PostFilter.vue';
-
+import PostModal from '@/components/posts/PostModal.vue';
 import AppPagination from '@/components/AppPagination.vue';
 import AppCard from '@/components/AppCard.vue';
 import AppGrid from '@/components/AppGrid.vue';
+import AppModal from '@/components/AppModal.vue';
 
 import { getPosts } from '@/api/posts';
 import { ref, computed, watchEffect } from 'vue';
@@ -148,6 +180,23 @@ const fetchPosts = async () => {
   }   
 };
 */
+
+// modal
+const modalTitle = ref();
+const modalContent = ref();
+const modalCreateAt = ref();
+
+const show = ref(false);
+const openModal = ({ title, content, createdAt }) => {
+  show.value = true;
+  modalTitle.value = title;
+  modalContent.value = content;
+  modalCreateAt.value = createdAt;
+};
+
+const closeModal = () => {
+  show.value = false;
+};
 </script>
 
 <style lang="scss" scoped></style>
