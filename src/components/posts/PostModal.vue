@@ -22,7 +22,6 @@
 </template>
 
 <script setup>
-import AppModalCustom from '@/components/AppModalCustom.vue';
 import { computed } from 'vue';
 const props = defineProps({
   modelValue: Boolean,

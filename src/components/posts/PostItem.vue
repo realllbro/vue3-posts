@@ -18,8 +18,6 @@
 </template>
 
 <script setup>
-import AppCard from '@/components/AppCard.vue';
-
 //setup 함수에서 Props를 선언할 때는 defineProps라는 메크로 함수를 사용한다.
 defineProps({
   title: {

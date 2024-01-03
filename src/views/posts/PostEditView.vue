@@ -29,8 +29,6 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPostById, updatePosts } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
-import AppAlert from '@/components/AppAlert.vue';
-import AppAlertMulti from '@/components/AppAlertMulti.vue';
 
 const router = useRouter();
 const route = useRoute();
