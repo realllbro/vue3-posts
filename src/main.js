@@ -7,7 +7,18 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from '@/router';
 
-createApp(App).use(router).mount('#app');
+//plugin
+import funcPlugins from './plugins/func';
+import objPlugins from './plugins/obj';
+import person from './plugins/person';
+
+const app = createApp(App);
+app.use(funcPlugins);
+app.use(objPlugins, { name: '오브젝트플러그인' });
+app.use(person, { name: '부라더' });
+
+app.use(router);
+app.mount('#app');
 
 import 'bootstrap/dist/js/bootstrap.js';
 
