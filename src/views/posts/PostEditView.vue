@@ -85,6 +85,7 @@ const goDetailPage = () =>
   router.push({ name: 'PostDetail', params: { id: id } });
 
 //alert 2초 뒤에 사라지게 설정.
+/* vAlert 배열(멀티)가 아닌 단일건 처리
 const showAlert = ref(false);
 const alertMessage = ref('');
 const alertType = ref('');
@@ -97,6 +98,7 @@ const vAlert = (message, type = 'error') => {
     showAlert.value = false;
   }, 2000);
 };
+*/
 
 // 반응형 배열로 멀티건 처리
 /* composables 함수로 리팩토링 하면서 주석처리
