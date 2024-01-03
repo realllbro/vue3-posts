@@ -8,7 +8,10 @@
         <div class="col-3 text-muted">내용:</div>
         <div class="col-9">{{ content }}</div>
         <div class="col-3 text-muted">등록일:</div>
-        <div class="col-9">{{ createAt }}</div>
+        <div class="col-9">
+          <!-- 전역변수로 선언한 $dayjs 플러그인 템플릿에서 사용방법 -->
+          {{ $dayjs(createdAt).format('YYYY.MM.DD HH:mm:ss') }}
+        </div>
       </div>
     </template>
 

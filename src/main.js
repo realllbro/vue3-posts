@@ -11,6 +11,7 @@ import router from '@/router';
 import funcPlugins from './plugins/func';
 import objPlugins from './plugins/obj';
 import person from './plugins/person';
+import dayjs from './plugins/dayjs';
 
 //디렉티브 (단건등록)
 // import focus from '@/directives/focus';
@@ -29,6 +30,7 @@ app.use(objPlugins, { name: '오브젝트플러그인' });
 app.use(person, { name: '부라더' });
 app.use(globalComponents);
 app.use(globalDirectives);
+app.use(dayjs);
 
 app.use(router);
 app.mount('#app');

@@ -2,7 +2,10 @@
   <div>
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
-    <p class="text-muted">{{ post.createdAt }}</p>
+    <p class="text-muted">
+      <!-- 전역변수로 선언한 $dayjs 플러그인 템플릿에서 사용방법 -->
+      {{ $dayjs(post.createdAt).format('YYYY.MM.DD HH:mm:ss') }}
+    </p>
     <hr class="my-4" />
     <div class="row g-2">
       <div class="col-auto">
@@ -24,6 +27,10 @@
         <button class="btn btn-outline-danger" @click="remove">삭제</button>
       </div>
     </div>
+
+    <br /><br /><br />
+    <h1>route 정보</h1>
+    <hr />
 
     <p>params : {{ $route.params }}</p>
 
