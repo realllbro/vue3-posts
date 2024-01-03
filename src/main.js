@@ -27,6 +27,7 @@ const app = createApp(App);
 app.use(funcPlugins);
 app.use(objPlugins, { name: '오브젝트플러그인' });
 */
+
 app.use(person, { name: '부라더' });
 app.use(globalComponents);
 app.use(globalDirectives);

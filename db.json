@@ -1,12 +1,6 @@
 {
   "posts": [
     {
-      "id": 1,
-      "title": "제목1",
-      "content": "내용1",
-      "createdAt": 1703751754683
-    },
-    {
       "id": 2,
       "title": "제목2",
       "content": "내용2",
@@ -73,22 +67,10 @@
       "id": 12
     },
     {
-      "title": "xcc 수정1",
-      "content": "ccc",
-      "createdAt": 1704260892469,
-      "id": 13
-    },
-    {
       "title": "게시글 테스트 ",
       "content": "게시글 상태 저장 테스트 ",
       "careatedAt": 1704264345085,
       "id": 14
-    },
-    {
-      "title": "컴포저블 등록수정",
-      "content": "컴포저블 등록 배고파",
-      "careatedAt": 1704264792598,
-      "id": 15
     }
   ]
 }

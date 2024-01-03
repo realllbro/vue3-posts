@@ -13,7 +13,7 @@
       {{ $dayjs(post.createdAt).format('YYYY.MM.DD HH:mm:ss') }}
     </p>
     <hr class="my-4" />
-    <AppError v-if="removeError" :message="'11111'" />
+    <AppError v-if="removeError" :message="removeError" />
     <div class="row g-2">
       <div class="col-auto">
         <button class="btn btn-outline-dark">이전글</button>
@@ -67,6 +67,12 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPostById, deletePosts } from '@/api/posts';
+
+import { useAlert } from '@/composables/alert';
+
+// App.vue 레이어로 위치 옮김
+// const { alerts, vAlertMulti, vSuccess } = useAlert();
+const { vAlertMulti, vSuccess } = useAlert();
 
 const router = useRouter();
 const route = useRoute();
@@ -141,10 +147,12 @@ const remove = async () => {
 
     // 1.삭제
     await deletePosts(props.id);
+    vSuccess('삭제가 완료 되었습니다.');
     router.push({ name: 'PostList' });
   } catch (err) {
-    removeError.value = err.message;
+    vAlertMulti(err.message);
     console.error(err);
+    removeError.value = err.message;
   } finally {
     // 2.progress 상태 처리
     removeLoading.value = false;
