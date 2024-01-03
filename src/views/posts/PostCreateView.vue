@@ -15,6 +15,8 @@
         <button class="btn btn-primary">저장</button>
       </template>
     </PostForm>
+    <!-- App.vue 레이어로 위치 옮김 
+      <AppAlertMulti :items="alerts" /> -->
   </div>
 </template>
 
@@ -23,6 +25,11 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { createPost } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
+import { useAlert } from '@/composables/alert';
+
+// App.vue 레이어로 위치 옮김
+// const { alerts, vAlertMulti, vSuccess } = useAlert();
+const { vAlertMulti, vSuccess } = useAlert();
 
 const router = useRouter();
 
@@ -41,9 +48,11 @@ const save = async () => {
       careatedAt: Date.now(),
     });
     //저장 후 페이지 이동
+    vSuccess('등록이 완료되었습니다.');
     router.push({ name: 'PostList' });
   } catch (error) {
     console.error(error);
+    vAlertMulti(error.message);
   }
 };
 const goListPage = () => router.push({ name: 'PostList' });

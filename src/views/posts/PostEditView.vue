@@ -20,7 +20,8 @@
       </template>
     </PostForm>
     <!-- <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" /> -->
-    <AppAlertMulti :items="alerts" />
+    <!-- App.vue 레이어로 위치 옮김 
+      <AppAlertMulti :items="alerts" /> -->
   </div>
 </template>
 
@@ -29,6 +30,12 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPostById, updatePosts } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
+
+import { useAlert } from '@/composables/alert';
+
+// App.vue 레이어로 위치 옮김
+// const { alerts, vAlertMulti, vSuccess } = useAlert();
+const { vAlertMulti, vSuccess } = useAlert();
 
 const router = useRouter();
 const route = useRoute();
@@ -64,8 +71,8 @@ const edit = async ({ title, content }) => {
   try {
     await updatePosts(id, { ...form.value });
     //vAlert('수정이 완료되었습니다!!!', 'success');
-    vAlertMulti('수정이 완료되었습니다!!!', 'success');
-    //router.push({ name: 'PostDetail', params: { id } });
+    vSuccess('수정이 완료되었습니다!!!');
+    router.push({ name: 'PostDetail', params: { id } });
   } catch (error) {
     console.error(error);
     vAlertMulti(error.message);
@@ -91,7 +98,8 @@ const vAlert = (message, type = 'error') => {
   }, 2000);
 };
 
-//반응형 배열로 멀티건 처리
+// 반응형 배열로 멀티건 처리
+/* composables 함수로 리팩토링 하면서 주석처리
 const alerts = ref([]);
 
 const vAlertMulti = (message, type = 'error') => {
@@ -100,6 +108,9 @@ const vAlertMulti = (message, type = 'error') => {
     alerts.value.shift();
   }, 2000);
 };
+
+const vSuccess = message => vAlertMulti(message, 'success');
+*/
 </script>
 
 <style lang="scss" scoped></style>
