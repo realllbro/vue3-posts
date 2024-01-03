@@ -10,28 +10,38 @@
     <!-- 검색조건 끝-->
 
     <hr class="my-4" />
-    <!-- Grid 형식으로 출력 시작-->
-    <AppGrid :items="posts">
-      <template v-slot="{ item }">
-        <PostItem
-          :title="item.title"
-          :content="item.content"
-          :created-at="item.createdAt"
-          @click="goPage(item.id)"
-          @modal="openModal(item)"
-        ></PostItem>
-      </template>
-    </AppGrid>
-    <!-- Grid 형식으로 출력 끝-->
 
-    <!--
+    <!-- 1.progress -->
+    <AppLoading v-if="loading" />
+
+    <!-- 2.오류시 메시지 처리  -->
+    <AppError v-else-if="error" :message="error.message" />
+
+    <!-- 3.정상처리  -->
+    <template v-else>
+      <!-- Grid 형식으로 출력 시작-->
+      <AppGrid :items="posts">
+        <template v-slot="{ item }">
+          <PostItem
+            :title="item.title"
+            :content="item.content"
+            :created-at="item.createdAt"
+            @click="goPage(item.id)"
+            @modal="openModal(item)"
+          ></PostItem>
+        </template>
+      </AppGrid>
+      <!-- Grid 형식으로 출력 끝-->
+
+      <!--
       emits 이벤트 = @page="page => (params._page = page)"
     -->
-    <AppPagination
-      :current-page="params._page"
-      :page-count="pageCount"
-      @page="page => (params._page = page)"
-    />
+      <AppPagination
+        :current-page="params._page"
+        :page-count="pageCount"
+        @page="page => (params._page = page)"
+      />
+    </template>
 
     <!-- 뷰3에 추가된 내장컴포넌트 Teleport는
        특정 DOM 으로 위치이동시킬 때 사용한다. -->
@@ -91,6 +101,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const posts = ref([]);
 
+const error = ref(null);
+const loading = ref(false);
+
 // pagination
 const params = ref({
   _sort: 'createdAt',
@@ -112,14 +125,21 @@ const pageCount = computed(() =>
 //async/await 문법
 const fetchPosts = async () => {
   try {
+    // 0.progress 상태 처리
+    loading.value = true;
+
     // 1.응답값에서 data, headers 속성만 추출
     const { data, headers } = await getPosts(params.value);
     posts.value = data;
 
     // 2.x-total-count 값은 하이픈이 포함되어 있어서 대괄호[] 표기법으로 추출
     totalCount.value = headers['x-total-count'];
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
+    error.value = err;
+  } finally {
+    // 3.progress 상태 처리
+    loading.value = false;
   }
 };
 //fetchPosts();

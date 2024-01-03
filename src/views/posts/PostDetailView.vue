@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <!-- 1.progress -->
+  <AppLoading v-if="loading" />
+
+  <!-- 2.오류시 메시지 처리  -->
+  <AppError v-else-if="error" :message="error.message" />
+
+  <div v-else>
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
     <p class="text-muted">
@@ -7,6 +13,7 @@
       {{ $dayjs(post.createdAt).format('YYYY.MM.DD HH:mm:ss') }}
     </p>
     <hr class="my-4" />
+    <AppError v-if="removeError" :message="'11111'" />
     <div class="row g-2">
       <div class="col-auto">
         <button class="btn btn-outline-dark">이전글</button>
@@ -24,7 +31,21 @@
         </button>
       </div>
       <div class="col-auto">
-        <button class="btn btn-outline-danger" @click="remove">삭제</button>
+        <button
+          class="btn btn-outline-danger"
+          @click="remove"
+          :disabled="removeLoading"
+        >
+          <template v-if="removeLoading">
+            <span
+              class="spinner-grow spinner-grow-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            <span class="visually-hidden">Loading...</span>
+          </template>
+          <template v-else>삭제</template>
+        </button>
       </div>
     </div>
 
@@ -70,16 +91,30 @@ const props = defineProps({
  */
 
 // ref 변수선언
-const post = ref({});
+const post = ref({
+  title: null,
+  content: null,
+  createdAt: null,
+});
+
+const error = ref(null);
+const loading = ref(false);
 
 // 1.조회
 const fetchPost = async () => {
   try {
+    // 0.progress 상태 처리
+    loading.value = true;
+
+    // 1.조회
     const { data } = await getPostById(props.id);
     //form.value = { ...data };
     setPost(data);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    error.value = err;
+  } finally {
+    // 2.progress 상태 처리
+    loading.value = false;
   }
 };
 
@@ -92,16 +127,27 @@ const setPost = ({ title, content, createdAt }) => {
 // 3.호출
 fetchPost();
 
+const removeError = ref(null);
+const removeLoading = ref(false);
+
 // 1.삭제
 const remove = async () => {
   try {
     if (confirm('삭제 하시겠습니까?') === false) {
       return;
     }
+    // 0.progress 상태 처리
+    removeLoading.value = true;
+
+    // 1.삭제
     await deletePosts(props.id);
     router.push({ name: 'PostList' });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    removeError.value = err.message;
+    console.error(err);
+  } finally {
+    // 2.progress 상태 처리
+    removeLoading.value = false;
   }
 };
 
