@@ -7,6 +7,7 @@
 
   <div v-else>
     <h2>{{ post.title }}</h2>
+    <p>id: {{ props.id }}, isOdd: {{ isOdd }}</p>
     <p>{{ post.content }}</p>
     <p class="text-muted">
       <!-- 전역변수로 선언한 $dayjs 플러그인 템플릿에서 사용방법 -->
@@ -67,6 +68,8 @@
 import { useRoute, useRouter } from 'vue-router';
 import { useAlert } from '@/composables/alert';
 import { useAxios } from '@/hooks/useAxios';
+import { useNumber } from '@/composables/number';
+import { computed, toRef, toRefs } from 'vue';
 
 // App.vue 레이어로 위치 옮김
 // const { alerts, vAlertMulti, vSuccess } = useAlert();
@@ -101,8 +104,20 @@ const props = defineProps({
   });
  */
 
+// toRef, toRefs 사용예
+// toRef 사용시
+// const idRef = toRef(props, 'id');
+
+// toRefs 사용시
+const { id: idRef } = toRefs(props);
+const { isOdd } = useNumber(idRef);
+
+// 상세보기 id 값에 따라 watchEffect 함수가 동작하게 url 반응형 데이터로 변경
+const url = computed(() => `/posts/${props.id}`);
+
 // 1.컴포저블 함수로 리팩토링-조회
-const { data: post, error, loading } = useAxios(`/posts/${props.id}`);
+// const { data: post, error, loading } = useAxios(`/posts/${props.id}`);
+const { data: post, error, loading } = useAxios(url);
 
 // 2.컴포저블 함수로 리팩토링-삭제
 const {

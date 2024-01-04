@@ -39,7 +39,8 @@ export const useAxios = (url, config = {}, options = {}) => {
     loading.value = true;
 
     // 4.파라메터 세팅 및 호출
-    axios(url, {
+    // axios(url, {   url이 반응형 데이터로 넘어오니 unref 해준다.
+    axios(unref(url), {
       ...defaultConfig,
       ...config,
       params: unref(params),
@@ -71,8 +72,8 @@ export const useAxios = (url, config = {}, options = {}) => {
 
   console.log('immediate : ' + immediate);
 
-  // params 변수가 ref 함수이면 watchEffect 으로 모니터링 하고 아니면 execute() 로 한번실행
-  if (isRef(params)) {
+  // params 변수 또는 url이 ref 함수이면 watchEffect 으로 모니터링 하고 아니면 execute() 로 한번실행
+  if (isRef(params) || isRef(url)) {
     // watchEffect 으로 처리하면 execute 메소드 안에 반응형 데이터가
     // 변경되면 콜백함수가 다시 실행된다.
     // watchEffect는 watch와 다르게 초기에도 한번 실행된다.

@@ -9,8 +9,11 @@
       <div class="d-flex flex-row-reverse">
         <!-- 카드 페이지에 걸려 있는 상세보기 링크 
           더블링 방지를 위해 stop 옵션 사용  -->
-        <button class="btn p-0" @click.stop="$emit('modal')">
+        <button class="btn p-1" @click.stop="$emit('modal')">
           <i class="bi bi-card-text"></i>
+        </button>
+        <button class="btn p-1" @click.stop="$emit('preview')">
+          <i class="bi bi-box-arrow-down"></i>
         </button>
       </div>
     </template>
@@ -35,7 +38,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(['modal']);
+defineEmits(['modal', 'preview']);
 
 // provide 등록된거 inject 로 주입해서 사용 방법
 const dayjs = inject('dayjs');

@@ -28,6 +28,7 @@
             :created-at="item.createdAt"
             @click="goPage(item.id)"
             @modal="openModal(item)"
+            @preview="selectPreview(item.id)"
           ></PostItem>
         </template>
       </AppGrid>
@@ -77,14 +78,16 @@
       </AppModal>      
      끝 -->
 
-    <template v-if="posts && posts.length > 0">
-      <!-- 상세보기 시작 -->
+    <!-- 상세보기 시작 -->
+    <!-- previewId 가 있을때만 렌더링 한다. -->
+    <template v-if="previewId">
       <hr class="my-5" />
       <AppCard>
-        <PostDetailView :id="posts[0].id"></PostDetailView>
+        <!-- 자식 컴포넌트에 props 속성으로 previewId 를 넘긴다. -->
+        <PostDetailView :id="previewId"></PostDetailView>
       </AppCard>
-      <!-- 상세보기 끝-->
     </template>
+    <!-- 상세보기 끝-->
   </div>
 </template>
 
@@ -99,6 +102,10 @@ import { useRouter } from 'vue-router';
 import { useAxios } from '@/hooks/useAxios';
 
 const router = useRouter();
+
+//toRef, toRefs 예제
+const previewId = ref(null);
+const selectPreview = id => (previewId.value = id);
 
 // pagination
 const params = ref({

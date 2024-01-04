@@ -3,7 +3,7 @@ export default {
     const person = {
       name: '이름',
       say() {
-        alert(this.name);
+        // alert(this.name);
       },
       ...options,
     };
