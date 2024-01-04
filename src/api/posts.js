@@ -1,4 +1,5 @@
 // from '.' 은 해당 디렉토리에 index.js 파일을 가져온다.
+// posts 는 index.js에 정의 되어 있다.
 import { posts } from '.';
 
 export function getPosts(params) {

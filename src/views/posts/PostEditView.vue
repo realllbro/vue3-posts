@@ -42,12 +42,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getPostById, updatePosts } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
 
 import { useAlert } from '@/composables/alert';
+import { useAxios } from '@/hooks/useAxios';
 
 // App.vue 레이어로 위치 옮김
 // const { alerts, vAlertMulti, vSuccess } = useAlert();
@@ -57,66 +56,33 @@ const router = useRouter();
 const route = useRoute();
 const id = route.params.id;
 
-// ref 변수선언
-const form = ref({
-  title: null,
-  content: null,
-});
+// 1.컴포저블 함수로 리팩토링 - 조회
+const { data: form, error, loading } = useAxios(`/posts/${id}`);
 
-const error = ref(null);
-const loading = ref(false);
+// 2.컴포저블 함수로 리팩토링 - 수정
+const {
+  error: editError,
+  loading: editLoading,
+  execute,
+} = useAxios(
+  `/posts/${id}`,
+  { method: 'patch' },
+  {
+    immediate: false,
+    onSuccess: () => {
+      vSuccess('수정이 완료되었습니다!!!');
+      router.push({ name: 'PostDetail', params: { id } });
+    },
+    onError: err => {
+      vAlertMulti(err.message);
+    },
+  },
+);
 
-// 1.조회
-const fetchPost = async () => {
-  try {
-    // 0.progress 상태 처리
-    loading.value = true;
-
-    // 1.조회
-    const { data } = await getPostById(id);
-    //form.value = { ...data };
-    setForm(data);
-  } catch (err) {
-    error.value = err;
-    //vAlert('네트워크 오류!');
-    vAlertMulti(err.message);
-  } finally {
-    // 2.progress 상태 처리
-    loading.value = false;
-  }
-};
-
-// 2.v-model 맵핑 작업
-const setForm = ({ title, content }) => {
-  form.value.title = title;
-  form.value.content = content;
-};
-fetchPost();
-
-const editError = ref(null);
-const editLoading = ref(false);
-
-// 3.수정
-const edit = async ({ title, content }) => {
-  try {
-    // 0.progress 상태 처리
-    editLoading.value = true;
-
-    // 1.수정
-    await updatePosts(id, { ...form.value });
-    //vAlert('수정이 완료되었습니다!!!', 'success');
-    vSuccess('수정이 완료되었습니다!!!');
-    router.push({ name: 'PostDetail', params: { id } });
-  } catch (err) {
-    editError.value = err;
-    console.error(err);
-    vAlertMulti(err.message);
-  } finally {
-    // 2.progress 상태 처리
-    editLoading.value = false;
-  }
-  form.value.title = title;
-  form.value.content = content;
+const edit = () => {
+  execute({
+    ...form.value,
+  });
 };
 
 const goDetailPage = () =>

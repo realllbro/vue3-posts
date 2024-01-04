@@ -64,11 +64,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getPostById, deletePosts } from '@/api/posts';
-
 import { useAlert } from '@/composables/alert';
+import { useAxios } from '@/hooks/useAxios';
 
 // App.vue 레이어로 위치 옮김
 // const { alerts, vAlertMulti, vSuccess } = useAlert();
@@ -94,69 +92,44 @@ const props = defineProps({
  * reactvie
  * 단) 객체 할당 불가능
  * 장) form.title, form.content
+ * 
+  // ref 변수선언
+  const post = ref({
+    title: null,
+    content: null,
+    createdAt: null,
+  });
  */
 
-// ref 변수선언
-const post = ref({
-  title: null,
-  content: null,
-  createdAt: null,
-});
+// 1.컴포저블 함수로 리팩토링-조회
+const { data: post, error, loading } = useAxios(`/posts/${props.id}`);
 
-const error = ref(null);
-const loading = ref(false);
+// 2.컴포저블 함수로 리팩토링-삭제
+const {
+  error: removeError,
+  loading: removeLoading,
+  execute,
+} = useAxios(
+  `/posts/${props.id}`,
+  { method: 'delete' },
+  {
+    immediate: false,
+    onSuccess: () => {
+      vSuccess('삭제가 완료 되었습니다.');
+      router.push({ name: 'PostList' });
+    },
+    onError: err => {
+      vAlertMulti(err.message);
+    },
+  },
+);
 
-// 1.조회
-const fetchPost = async () => {
-  try {
-    // 0.progress 상태 처리
-    loading.value = true;
-
-    // 1.조회
-    const { data } = await getPostById(props.id);
-    //form.value = { ...data };
-    setPost(data);
-  } catch (err) {
-    error.value = err;
-  } finally {
-    // 2.progress 상태 처리
-    loading.value = false;
+// 3.삭제
+const remove = () => {
+  if (confirm('삭제 하시겠습니까?') === false) {
+    return;
   }
-};
-
-// 2.v-model 맵핑 작업
-const setPost = ({ title, content, createdAt }) => {
-  post.value.title = title;
-  post.value.content = content;
-  post.value.createdAt = createdAt;
-};
-// 3.호출
-fetchPost();
-
-const removeError = ref(null);
-const removeLoading = ref(false);
-
-// 1.삭제
-const remove = async () => {
-  try {
-    if (confirm('삭제 하시겠습니까?') === false) {
-      return;
-    }
-    // 0.progress 상태 처리
-    removeLoading.value = true;
-
-    // 1.삭제
-    await deletePosts(props.id);
-    vSuccess('삭제가 완료 되었습니다.');
-    router.push({ name: 'PostList' });
-  } catch (err) {
-    vAlertMulti(err.message);
-    console.error(err);
-    removeError.value = err.message;
-  } finally {
-    // 2.progress 상태 처리
-    removeLoading.value = false;
-  }
+  execute();
 };
 
 const goListPage = () => router.push({ name: 'PostList' });

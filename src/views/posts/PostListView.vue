@@ -43,7 +43,7 @@
       />
     </template>
 
-    <!-- 뷰3에 추가된 내장컴포넌트 Teleport는
+    <!-- a-1.뷰3에 추가된 내장컴포넌트 Teleport는
        특정 DOM 으로 위치이동시킬 때 사용한다. -->
     <Teleport to="#modal">
       <!-- PostModal은 AppModalCustom 사용 v-model로 구현함.-->
@@ -55,7 +55,7 @@
       />
     </Teleport>
 
-    <!-- AppModal 컴포넌트 사용 props, emits 구현함.-->
+    <!-- a-2.AppModal 컴포넌트 사용 props, emits로 구현함.-->
     <!-- <AppModal :show="show" title="게시글" @close="closeModal">
         <template #default>
           <div class="row g-3">
@@ -94,15 +94,11 @@ import PostDetailView from '@/views/posts/PostDetailView.vue';
 import PostFilter from '@/components/posts/PostFilter.vue';
 import PostModal from '@/components/posts/PostModal.vue';
 
-import { getPosts } from '@/api/posts';
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAxios } from '@/hooks/useAxios';
 
 const router = useRouter();
-const posts = ref([]);
-
-const error = ref(null);
-const loading = ref(false);
 
 // pagination
 const params = ref({
@@ -113,41 +109,22 @@ const params = ref({
   //title_like: '1',
 });
 
-//페이지 토탈건수
-const totalCount = ref(0);
+// 1.컴포저블 함수로 리팩토링 - 목록조회
+const {
+  response,
+  data: posts,
+  error,
+  loading,
+} = useAxios('/posts', { method: 'get', params });
+
+// 페이지 토탈 카운트는 헤더에 있다.
+const totalCount = computed(() => response.value.headers['x-total-count']);
 
 //페이징 갯수
 const pageCount = computed(() =>
   //소수점 올림 처리
   Math.ceil(totalCount.value / params.value._limit),
 );
-
-//async/await 문법
-const fetchPosts = async () => {
-  try {
-    // 0.progress 상태 처리
-    loading.value = true;
-
-    // 1.응답값에서 data, headers 속성만 추출
-    const { data, headers } = await getPosts(params.value);
-    posts.value = data;
-
-    // 2.x-total-count 값은 하이픈이 포함되어 있어서 대괄호[] 표기법으로 추출
-    totalCount.value = headers['x-total-count'];
-  } catch (err) {
-    console.error(err);
-    error.value = err;
-  } finally {
-    // 3.progress 상태 처리
-    loading.value = false;
-  }
-};
-//fetchPosts();
-
-// watchEffect 으로 처리하면 fetchPosts 메소드 안에 반응형 데이터가
-// 변경되면 콜백함수가 다시 실행된다.
-// watchEffect는 watch와 다르게 초기에 한번 실행된다.
-watchEffect(fetchPosts);
 
 // 1.url : ex)http://localhost:5173/posts/1
 // router.push('/posts/' + id);
@@ -169,38 +146,6 @@ const goPage = id => {
     hash: '#world!',
   });
 };
-
-/* 
-  1.Promise 문법
-const fetchPosts = () => {
-  getPosts()
-    .then(response => {
-      console.log('response : ', response);
-    })
-    .catch(error => {
-      console.log('error : ', error);
-    });
-};
-
- 2.async/await 문법
-const fetchPosts = async () => {
-
-  try {  
-   2-1.호출 리턴 값 객체 로그 찍기.
-   const response = await getPosts();
-   console.dir(response); 
-
-   2-2.호출 리턴 값 구조분해 할당. 결과값에서 data 속성만 추출
-   const { data } = await getPosts();
-   posts.value = data;
-
-   2-3. 2-2와 같은 문법 : 왼쪽 결과를 오른쪽에 대입.
-   ({ data: posts.value } = await getPosts());
-  } catch (error) {
-    console.error(error);
-  }   
-};
-*/
 
 // modal
 const modalTitle = ref();
