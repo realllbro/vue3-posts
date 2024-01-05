@@ -2,8 +2,17 @@
   <!--트랜지션 효과 적용 (내장 컴포넌트라 바로 사용할 수 있다.)-->
   <div class="app-alert">
     <TransitionGroup name="slide">
+      <!-- 피니아 스토어로 리팩토링 하면서 주석처리
       <div
         v-for="({ message, type }, index) in items"
+        :key="index"
+        class="alert"
+        :class="typeStyle(type)"
+        role="alert"
+      >
+       -->
+      <div
+        v-for="({ message, type }, index) in alerts"
         :key="index"
         class="alert"
         :class="typeStyle(type)"
@@ -16,9 +25,15 @@
 </template>
 
 <script setup>
+import { useAlert } from '@/composables/alert';
+
+/* 피니아 스토어로 리팩토링 하면서 주석처리 Props 사용안함
 defineProps({
   items: Array,
 });
+*/
+
+const { alerts } = useAlert();
 
 const typeStyle = type => (type === 'error' ? 'alert-danger' : 'alert-primary');
 </script>
