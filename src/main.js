@@ -3,6 +3,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import './assets/main.css';
 
+//pinia 상태(state) 관리 플러그인
+import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from '@/router';
@@ -33,6 +35,7 @@ app.use(globalComponents);
 app.use(globalDirectives);
 app.use(dayjs);
 
+app.use(createPinia());
 app.use(router);
 app.mount('#app');
 
