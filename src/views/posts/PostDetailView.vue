@@ -48,6 +48,17 @@
           <template v-else>삭제</template>
         </button>
       </div>
+      <!-- 컴포넌트 네비게이션 가드 테스트용 -->
+      <div class="row g-1">
+        <div class="col-auto">
+          <button
+            class="btn btn-outline-dark"
+            @click="$router.push('/posts/10')"
+          >
+            onBeforeRouteUpdate
+          </button>
+        </div>
+      </div>
     </div>
 
     <br /><br /><br />
@@ -65,7 +76,12 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
+import {
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
+  useRoute,
+  useRouter,
+} from 'vue-router';
 import { useAlert } from '@/composables/alert';
 import { useAxios } from '@/hooks/useAxios';
 import { useNumber } from '@/composables/number';
@@ -150,6 +166,26 @@ const remove = () => {
 const goListPage = () => router.push({ name: 'PostList' });
 const goEditPage = () =>
   router.push({ name: 'PostEdit', params: { id: props.id } });
+
+//컴포넌트 네비게이션 가드 1.Composition API 사용
+// onBeforeRouteUpdate url 경로가 변경되었을때
+onBeforeRouteUpdate(() => {
+  console.log('onBeforeRouteUpdate');
+});
+// 화면을 떠날때
+onBeforeRouteLeave(() => {
+  console.log('onBeforeRouteLeave');
+});
+</script>
+
+<script>
+//컴포넌트 네비게이션 가드 2.Options API 사용
+// 화면을 들어올때
+export default {
+  beforeRouteEnter() {
+    console.log('beforeRouteEnter');
+  },
+};
 </script>
 
 <style lang="scss" scoped></style>

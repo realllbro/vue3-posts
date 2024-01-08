@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia';
 
 export const useAlertStore = defineStore('alert', {
-
   //리액티브 객체라서 .value 아님.
-  state: () => {
-    alerts = [],
-  },
+  state: () => ({
+    alerts: [],
+  }),
   actions: {
     vAlertMulti(message, type = 'error') {
       this.alerts.push({ message, type });

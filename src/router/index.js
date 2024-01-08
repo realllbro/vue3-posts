@@ -17,6 +17,7 @@ import NestedView from '@/views/nested/NestedView.vue';
 import NestedOneView from '@/views/nested/NestedOneView.vue';
 import NestedTwoView from '@/views/nested/NestedTwoView.vue';
 import NestedHomeView from '@/views/nested/NestedHomeView.vue';
+import MyPage from '@/views/MyPage.vue';
 
 const routes = [
   {
@@ -88,7 +89,39 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/my',
+    name: 'MyPage',
+    component: MyPage,
+    /*    
+    // 라우트 네비게이션 가드 2. 라우트의 설정 객체에 직접 정의
+    beforeEnter: (to, from) => {
+      // console.log('to: ', to);
+      // console.log('from: ', from);
+      // return false;
+      // 객체 또는 주소로 리턴.
+      //return { name: 'Home' };
+      // return '/posts';
+      // url에 QueryString 처리.
+      console.log(to.query);
+
+      // 1.Object.keys 쿼리스트링을 배열로 리턴.
+      // 쿼리스트링이 존재하면 query: {} 로 초기화 후 이동.
+      if (Object.keys(to.query).length > 0) {
+        return { path: to.path, query: {} };
+      }
+    },
+    */
+    // 라우트 네비게이션 가드 3. 라우트의 설정 객체에 배열로 여러개 지정 가능.
+    beforeEnter: [removeQueryString],
+  },
 ];
+
+function removeQueryString(to) {
+  if (Object.keys(to.query).length > 0) {
+    return { path: to.path, query: {} };
+  }
+}
 
 const router = createRouter({
   // 웹 히스토리 모드
@@ -98,5 +131,29 @@ const router = createRouter({
   //history: createWebHashHistory(),
   routes,
 });
+
+/*
+  라우트 네비게이션 가드 1. 전역가드
+  Global Before Guards
+  라우팅 되는 객체와 되기 전의 객체를 받는다.
+  네비게이션을 취소하려면 명시적으로 false를 반환합니다.
+
+router.beforeEach((to, from) => {
+  console.log('to: ', to);
+  console.log('from: ', from);
+
+  // 이동하려는 페이지 이름이 MyPage 는 리턴되게
+  if (to.name === '!MyPage') {
+    return false;
+  }
+  if (to.name === 'MyPage') {
+    //같은효과 router.push({ name: 'Home' });
+
+    // 객체 또는 주소로 리턴.
+    //return { name: 'Home' };
+    return '/posts';
+  }
+});
+*/
 
 export default router;
